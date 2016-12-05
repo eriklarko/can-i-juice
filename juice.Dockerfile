@@ -21,4 +21,4 @@ RUN check-flow.sh react || true
 
 ADD ./web-server /web-server
 WORKDIR /web-server
-RUN npm start
+RUN npm install && npm start
