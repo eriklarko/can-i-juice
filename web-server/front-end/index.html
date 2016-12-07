@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>can i juice?</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Theme CSS -->
+    <link href="css/freelancer.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="intro-text">
+                        <span class="name">can i juice?</span>
+                        <hr class="star-light">
+                        <div class="skills">Can't decide wether to use flowtype or typescript?</div>
+                        <div class="skills">Maybe which libraries they support can help you choose.</div>
+                    </div>
+                </div>
+                <div class="text-center col-lg-offset-4">
+                    <form name="sentMessage" id="contactForm" novalidate="">
+                        <div class="row control-group"  style="max-width: 300px; margin-top: 23em">
+                            <div class="form-group col-xs-10 floating-label-form-group controls">
+                                <label>&nbsp;</label>
+                                <input class="form-control" placeholder="package name" value="react-dnd" id="package-name" required="" data-validation-required-message="Please enter a package name." aria-invalid="false" type="text">
+                                <p class="help-block text-danger"></p>
+                            </div>
+                            <div class="form-group col-xs-2">
+                                <button type="submit" class="btn btn-lg btn-outline">can i juice?</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section class="success" id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Top Searches</h2>
+                    <hr class="star-light">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-1 text-center">
+                    <div id="errors" style="visibility: none"></div>
+                    <table id="table" style="font-size: 27px; width: 100%">
+                        <thead>
+                            <tr>
+                                <td></td>
+                                <td>FlowType</td>
+                                <td>TypeScript</td>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function format(str) {
+            for(i = 1; i < arguments.length; i++) {
+                str = str.replace('{' + (i - 1) + '}', arguments[i]);
+            }
+            return str;
+        }
+        var tmpl = "<tr>" +
+                        "<td>{0}</td> " +
+                        "<td>{1}</td>" +
+                        "<td>{2}</td>" +
+                    "</tr>";
+
+
+        var myRequest = "http://ip.jsontest.com/";
+        fetch(myRequest).then(function(response) {
+            // TODO: error handling
+            var contentType = response.headers.get("content-type");
+
+            if(contentType && contentType.indexOf("application/json") !== -1) {
+                return response.json().then(function(json) {
+                    // process your JSON further
+                    console.log("Yee", json);
+                    json = [1,2,3];
+                    if (Array.isArray(json)) {
+                        showError("hej");
+                        //showResults(json);
+                    } else {
+                        showError("Malformed response :(");
+                    }
+                });
+            } else {
+                showError("Malformed response :(");
+            }
+        });
+
+        function showError(error) {
+            document.querySelector('#errors').innerHTML = error;
+
+            document.querySelector('#errors').style.display = "block";
+            document.querySelector('#table').style.visibility = "hidden";
+        }
+
+        function showResults(json) {
+            var a = json.map(function(r) {
+                var pkgName = json["package-name"] || "n/a";
+                var flow = json["exists-in-flow"] || "n/a";
+                var type = json["exists-in-typescript"] || "n/a";
+
+                return format(tmpl, "a", 2, 3);
+            });
+            document.querySelector('#tbody').innerHTML = a.join("");
+
+            document.querySelector('#errors').style.display = "none";
+            document.querySelector('#table').style.visibility = "visible";
+        }
+    </script>
+</body>
+</html>
