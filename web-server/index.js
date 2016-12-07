@@ -14,9 +14,7 @@ app.get('/check/:packageName', function (req, res) {
     res.send(response);
 });
 
-app.get('/', function (req, res) {
-    res.send("Here be pretty react file. Oh yeah");
-});
+app.use(express.static('front-end'));
 
 app.listen(3000, function () {
     console.log('App listening on port 3000!')
