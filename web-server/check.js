@@ -9,23 +9,29 @@ const cache = newCache({
     persist: true,
 });
 
-module.exports = function check(packageName) {
-    let response = cache.getSync(packageName);
-    if (!response) {
-        console.log("Cache miss for", packageName);
-        response = doCheck(packageName);
-        cache.put(packageName, response);
-    }
-    return response;
+module.exports = function check(packageName, cb) {
+    cache.get(packageName, (err, response) => {
+        if (err) { cb(err, response)};
+
+        if (response) {
+            cb(undefined, response);
+        } else {
+            console.log("Cache miss for", packageName);
+            doCheck(packageName, (response) => {
+                cache.put(packageName, response);
+                cb(undefined, response);
+            });
+        }
+    });
 }
 
-function doCheck(packageName) {
+function doCheck(packageName, cb) {
     const response = {
         "package": packageName,
         "exists-in-flow": checkFlow(packageName),
         "exists-in-typescript": checkTypescript(packageName),
     };
-    return response;
+    cb(response);
 }
 
 function checkFlow(packageName) {

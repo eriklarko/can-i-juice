@@ -19,7 +19,7 @@ try {
 }
 
 function logPackageCheck(response) {
-    console.log(new Date(), response);
+    console.log(new Date(), JSON.stringify(response));
 
     const c = log[response.package] || 0;
     log[response.package] = c + 1;
@@ -31,8 +31,6 @@ function persist(obj, file) {
     fs.writeFile(file, JSON.stringify(obj), (err) => {
         if (err){
             console.log("Failed writing file " + file + ", " + JSON.stringify(err));
-        } else {
-            console.log('It\'s saved!');
         }
     });
 }
@@ -57,9 +55,15 @@ function doGetTop() {
 
 app.get('/check/:packageName', function (req, res) {
     const packageName = req.params.packageName;
-    const response = check(packageName);
-    logPackageCheck(response);
-    res.send(response);
+    const response = check(packageName, (err, response) => {
+        if (err) {
+            console.error("Error while responding to /check/" + packageName, err);
+            res.send("could not reply to request");
+        } else {
+            logPackageCheck(response);
+            res.send(response);
+        }
+    });
 });
 
 app.get('/top', function (req, res) {
