@@ -9,3 +9,18 @@ services:
       - "3000:3000"
     volumes:
       - ./cache:/web-server/cache
+    environment:
+      VIRTUAL_HOST: can-i-juice.com
+    depends_on:
+      - nginx-proxy
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
