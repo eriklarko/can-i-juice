@@ -35,22 +35,45 @@ function persist(obj, file) {
     });
 }
 
-function getTop() {
-    let top = topCache.getSync("top");
-    if (!top) {
-        console.log("Top list cache miss");
-        top = doGetTop();
-        topCache.put("top", top);
-    }
-    return top;
+function getTop(cb) {
+    topCache.get("top", (err, top) => {
+        if (err) { cb(err, undefined); }
+
+        if (top) {
+            cb(undefined, top);
+        } else {
+            console.log("Top list cache miss");
+            doGetTop((top) => {
+                topCache.put("top", top);
+                cb(undefined, top);
+            });
+        }
+    });
 }
 
-function doGetTop() {
-    return Object.keys(log).sort(function(a, b) {
+function doGetTop(cb) {
+    const topPackageNames = Object.keys(log).sort(function(a, b) {
             return log[b] - log[a];
         })
-        .splice(0, 10)
-        .reduce((aggr, elem) => {aggr.push(check(elem)); return aggr;}, []);
+        .splice(0, 10);
+
+    let agg = [];
+    const counter = (err, pkg) => {
+        if (err) {
+            agg.push({});
+        } else {
+            agg.push(pkg);
+        }
+
+        if (agg.length === topPackageNames.length) {
+            agg = agg.sort(function(a, b) {
+                return log[b] - log[a];
+            });
+            cb(agg);
+        }
+    };
+
+    topPackageNames.forEach(pkg => check(pkg, counter));
 }
 
 app.get('/check/:packageName', function (req, res) {
@@ -67,8 +90,14 @@ app.get('/check/:packageName', function (req, res) {
 });
 
 app.get('/top', function (req, res) {
-    const top = getTop();
-    res.send(top);
+    const top = getTop((err, top) => {
+        if (err) {
+            console.error("Error while responding to /top", err);
+            res.send("could not reply to request");
+        } else {
+            res.send(top);
+        }
+    });
 });
 
 app.use(express.static('front-end'));
