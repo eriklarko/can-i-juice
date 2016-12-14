@@ -3,12 +3,8 @@ FROM ubuntu:16.10
 ADD ./setup_node_6.x.sh /setup_node_6.x.sh
 RUN /setup_node_6.x.sh
 
-ADD ./yarn.pubkey.gpg /yarn.pubkey.gpg 
-RUN apt-key add /yarn.pubkey.gpg
-RUN echo "deb http://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
-
 RUN apt-get update \
-    && apt-get install -y nodejs yarn git
+    && apt-get install -y nodejs git
 
 RUN npm install -g typescript
 RUN npm install -g flow-typed
