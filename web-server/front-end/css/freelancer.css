@@ -78,7 +78,7 @@ header .container {
 }
 header img {
   display: block;
-  margin: 0 auto 20px;
+  margin: 0 auto;
 }
 header .intro-text .name {
   display: block;
@@ -169,14 +169,6 @@ section.success {
   background: transparent;
   transition: all 0.3s ease-in-out;
   margin-top: 15px;
-}
-.btn-outline:hover,
-.btn-outline:focus,
-.btn-outline:active,
-.btn-outline.active {
-  color: #18BC9C;
-  background: white;
-  border: solid 2px white;
 }
 .btn-primary {
   color: white;
@@ -300,4 +292,5 @@ tbody tr td:first-child {
 }
 #check-btn {
   min-width: 182px;
+  height: 59px;
 }

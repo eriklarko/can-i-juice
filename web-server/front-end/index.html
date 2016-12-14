@@ -110,7 +110,7 @@
 
         function startLoadingIndicator() {
             console.log("loading...");
-            document.querySelector("#check-btn").innerHTML = "...";
+            document.querySelector("#check-btn").innerHTML = "<img src='img/ajax-loader.gif' />";
 
             var res = document.querySelector("#result");
             if (res.className === "error") {
@@ -125,17 +125,25 @@
         }
 
         function showCheckResponse(packageName, json) {
-            console.log(packageName, json);
-
-            var flow = json["exists-in-flow"] || "n/a";
-            var type = json["exists-in-typescript"] || "n/a";
-
-            flow = flow === "true" ? "✓" : "☓";
-            type = type === "true" ? "✓" : "☓";
+            var flow = json["exists-in-flow"] || false;
+            var type = json["exists-in-typescript"] || false;
 
             var res = document.querySelector("#result");
-            res.innerHTML = format("{0}: FlowType: {1}, TypeScript: {2}", packageName, flow, type);
+            res.innerHTML = generateResponse(packageName, flow, type);
             res.className = "";
+        }
+
+        function generateResponse(packageName, flow, type) {
+            format("{0}: FlowType: {1}, TypeScript: {2}", packageName, flow, type);
+            if (flow && type) {
+                return format("You can use {0} with both FlowType and TypeScript!", packageName);
+            } else if (flow) {
+                return format("It seems only FlowType has typings for {0}", packageName);
+            } else if (type) {
+                return format("It seems only TypeScript has typings for {0}", packageName);
+            } else {
+                return format("Neither FlowType nor TypeScript has typings for {0}", packageName);
+            }
         }
 
         function showCheckError(packageName, error) {
@@ -186,11 +194,11 @@
         function showTop(json) {
             var a = json.map(function(r) {
                 var pkgName = r["package"] || "n/a";
-                var flow = r["exists-in-flow"] || "n/a";
-                var type = r["exists-in-typescript"] || "n/a";
+                var flow = r["exists-in-flow"];
+                var type = r["exists-in-typescript"];
 
-                flow = flow === "true" ? "✓" : "☓";
-                type = type === "true" ? "✓" : "☓";
+                flow = flow === true ? "✓" : "☓";
+                type = type === true ? "✓" : "☓";
 
                 return format(tmpl, pkgName, flow, type);
             });
