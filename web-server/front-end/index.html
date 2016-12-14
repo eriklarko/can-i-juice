@@ -94,26 +94,25 @@
                         "<td>{2}</td>" +
                     "</tr>";
 
-
-        var myRequest = "http://ip.jsontest.com/";
+        var host = window.location.origin;
+        var myRequest = host + "/top";
         fetch(myRequest).then(function(response) {
-            // TODO: error handling
             var contentType = response.headers.get("content-type");
 
             if(contentType && contentType.indexOf("application/json") !== -1) {
                 return response.json().then(function(json) {
                     // process your JSON further
-                    console.log("Yee", json);
-                    json = [1,2,3];
                     if (Array.isArray(json)) {
-                        showError("hej");
-                        //showResults(json);
+                        console.log("Yee", json);
+                        showResults(json);
                     } else {
                         showError("Malformed response :(");
+                        console.error(json);
                     }
                 });
             } else {
                 showError("Malformed response :(");
+                console.error(response);
             }
         });
 
@@ -126,11 +125,14 @@
 
         function showResults(json) {
             var a = json.map(function(r) {
-                var pkgName = json["package-name"] || "n/a";
-                var flow = json["exists-in-flow"] || "n/a";
-                var type = json["exists-in-typescript"] || "n/a";
+                var pkgName = r["package"] || "n/a";
+                var flow = r["exists-in-flow"] || "n/a";
+                var type = r["exists-in-typescript"] || "n/a";
 
-                return format(tmpl, "a", 2, 3);
+                flow = flow === "true" ? "✓" : "☓";
+                type = type === "true" ? "✓" : "☓";
+
+                return format(tmpl, pkgName, flow, type);
             });
             document.querySelector('#tbody').innerHTML = a.join("");
 
