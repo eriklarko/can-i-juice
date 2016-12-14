@@ -73,8 +73,8 @@
                         <thead>
                             <tr>
                                 <td></td>
-                                <td>FlowType</td>
-                                <td>TypeScript</td>
+                                <td>flow</td>
+                                <td>typescript</td>
                             </tr>
                         </thead>
                         <tbody id="tbody"></tbody>
@@ -129,20 +129,19 @@
             var type = json["exists-in-typescript"] || false;
 
             var res = document.querySelector("#result");
-            res.innerHTML = generateResponse(packageName, flow, type);
+            res.innerHTML = generateResponse(packageName.toLowerCase(), flow, type);
             res.className = "";
         }
 
         function generateResponse(packageName, flow, type) {
-            format("{0}: FlowType: {1}, TypeScript: {2}", packageName, flow, type);
             if (flow && type) {
-                return format("You can use {0} with both FlowType and TypeScript!", packageName);
+                return format("You can use {0} with both flow and typescript!", packageName);
             } else if (flow) {
-                return format("It seems only FlowType has typings for {0}", packageName);
+                return format("It seems only flow has typings for {0}", packageName);
             } else if (type) {
-                return format("It seems only TypeScript has typings for {0}", packageName);
+                return format("It seems only typescript has typings for {0}", packageName);
             } else {
-                return format("Neither FlowType nor TypeScript has typings for {0}", packageName);
+                return format("Neither flow nor typescript has typings for {0}", packageName);
             }
         }
 
@@ -200,7 +199,7 @@
                 flow = flow === true ? "✓" : "☓";
                 type = type === true ? "✓" : "☓";
 
-                return format(tmpl, pkgName, flow, type);
+                return format(tmpl, pkgName.toLowerCase(), flow, type);
             });
             document.querySelector('#tbody').innerHTML = a.join("");
 

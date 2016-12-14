@@ -283,6 +283,9 @@ fieldset[disabled] .btn-success.active {
 tbody tr:nth-child(2n) {
   border-bottom: 1px solid white;
 }
+tbody tr:last-child {
+  border-bottom: none;
+}
 thead {
   font-size: 27px;
 }

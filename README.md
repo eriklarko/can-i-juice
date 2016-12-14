@@ -7,3 +7,5 @@ Are there type definitions for a package in typescript or flow?
 - [ ] Run the web server as a non-root user in the docker image
 - [x] Add end-point showing the x most commonly looked up packages
 - [x] Web page with a search field and the x most commonly looked up packages
+- [ ] Proper logging
+- [ ] https

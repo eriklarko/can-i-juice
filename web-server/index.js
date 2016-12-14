@@ -56,9 +56,11 @@ function doGetTop(cb) {
             return log[b] - log[a];
         })
         .splice(0, 10);
+        console.log("Generating top: ", topPackageNames);
 
     let agg = [];
     const counter = (err, pkg) => {
+        console.log("Top got check response for", pkg, err);
         if (err) {
             agg.push({});
         } else {
@@ -66,6 +68,7 @@ function doGetTop(cb) {
         }
 
         if (agg.length === topPackageNames.length) {
+            console.log("All top packages have been checked");
             agg = agg.sort(function(a, b) {
                 return log[b] - log[a];
             });
@@ -73,7 +76,11 @@ function doGetTop(cb) {
         }
     };
 
-    topPackageNames.forEach(pkg => check(pkg, counter));
+    if (topPackageNames.length === 0) {
+        cb(topPackageNames);
+    } else {
+        topPackageNames.forEach(pkg => check(pkg, counter));
+    }
 }
 
 app.get('/check/:packageName', function (req, res) {
