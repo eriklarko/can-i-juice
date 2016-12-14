@@ -1,1 +1,1 @@
-docker-compose logs
+docker-compose logs $@
