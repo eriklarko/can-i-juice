@@ -1,10 +1,11 @@
 version: '2'
+
 services:
   web:
     build:
       context: .
       dockerfile: juice.Dockerfile
     ports:
-     - "3000:3000"
+      - "3000:3000"
     volumes:
-     - ./cache:/web-server/cache
+      - ./cache:/web-server/cache
