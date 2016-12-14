@@ -9,3 +9,4 @@ Are there type definitions for a package in typescript or flow?
 - [x] Web page with a search field and the x most commonly looked up packages
 - [x] Proper logging, just do `docker-compose logs`
 - [ ] https
+- [ ] gitignore cert folders in this repo
