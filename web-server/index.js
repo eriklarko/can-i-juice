@@ -51,6 +51,7 @@ function doGetTop() {
     return Object.keys(log).sort(function(a, b) {
             return log[b] - log[a];
         })
+        .splice(0, 10)
         .reduce((aggr, elem) => {aggr.push(check(elem)); return aggr;}, []);
 }
 
