@@ -288,8 +288,8 @@ fieldset[disabled] .btn-success.active {
   /* Internet Explorer 10-11 */
   color: #fff !important;
 }
-tbody tr:nth-child(odd) {
-  border-bottom: 1px solid #2C3E50;
+tbody tr:nth-child(2n) {
+  border-bottom: 1px solid white;
 }
 thead {
   font-size: 27px;
