@@ -37,18 +37,21 @@
                     </div>
                 </div>
                 <div class="text-center col-lg-offset-4">
-                    <form name="sentMessage" id="contactForm" novalidate="">
+                    <form name="sentMessage" id="contactForm" novalidate="" onsubmit="return false;" >
                         <div class="row control-group"  style="max-width: 300px; margin-top: 23em">
                             <div class="form-group col-xs-10 floating-label-form-group controls">
                                 <label>&nbsp;</label>
-                                <input class="form-control" placeholder="package name" value="react-dnd" id="package-name" required="" data-validation-required-message="Please enter a package name." aria-invalid="false" type="text">
+                                <input onFocus="this.value === 'react-dnd' && this.select()" class="form-control" placeholder="package name" value="react-dnd" id="package-name" required="" data-validation-required-message="Please enter a package name." aria-invalid="false" type="text">
                                 <p class="help-block text-danger"></p>
                             </div>
                             <div class="form-group col-xs-2">
-                                <button type="submit" class="btn btn-lg btn-outline">can i juice?</button>
+                                <button id="check-btn" class="btn btn-lg btn-outline" onClick="javascript:check()">can i juice?</button>
                             </div>
                         </div>
                     </form>
+                </div>
+                <div>
+                    <h3 id="result"></h3>
                 </div>
             </div>
         </div>
@@ -82,6 +85,65 @@
     </section>
 
     <script>
+        var host = window.location.origin;
+        function check() {
+            var input = document.querySelector("#package-name");
+            var packageName = input.value;
+
+            startLoadingIndicator();
+            fetch(host + "/check/" + packageName).then(function(response) {
+                stopLoadingIndicator();
+                var contentType = response.headers.get("content-type");
+
+                if(contentType && contentType.indexOf("application/json") !== -1) {
+                    return response.json().then(function(json) {
+                        // process your JSON further
+                        console.log("Yee", json);
+                        showCheckResponse(packageName, json);
+                    });
+                } else {
+                    showCheckError(packageName, "Malformed response :(");
+                    console.error(response);
+                }
+            });
+        }
+
+        function startLoadingIndicator() {
+            console.log("loading...");
+            document.querySelector("#check-btn").innerHTML = "...";
+
+            var res = document.querySelector("#result");
+            if (res.className === "error") {
+                res.innerHTML = "";
+                res.className = "";
+            }
+        }
+
+        function stopLoadingIndicator() {
+            console.log("done loading!");
+            document.querySelector("#check-btn").innerHTML = "can i juice?";
+        }
+
+        function showCheckResponse(packageName, json) {
+            console.log(packageName, json);
+
+            var flow = json["exists-in-flow"] || "n/a";
+            var type = json["exists-in-typescript"] || "n/a";
+
+            flow = flow === "true" ? "✓" : "☓";
+            type = type === "true" ? "✓" : "☓";
+
+            var res = document.querySelector("#result");
+            res.innerHTML = format("{0}: FlowType: {1}, TypeScript: {2}", packageName, flow, type);
+            res.className = "";
+        }
+
+        function showCheckError(packageName, error) {
+            var res = document.querySelector("#result");
+            res.innerHTML = "Could not check " + packageName + " now :( please try again!";
+            res.className = "error";
+        }
+
         function format(str) {
             for(i = 1; i < arguments.length; i++) {
                 str = str.replace('{' + (i - 1) + '}', arguments[i]);
@@ -94,9 +156,7 @@
                         "<td>{2}</td>" +
                     "</tr>";
 
-        var host = window.location.origin;
-        var myRequest = host + "/top";
-        fetch(myRequest).then(function(response) {
+        fetch(host + "/top").then(function(response) {
             var contentType = response.headers.get("content-type");
 
             if(contentType && contentType.indexOf("application/json") !== -1) {
@@ -104,26 +164,26 @@
                     // process your JSON further
                     if (Array.isArray(json)) {
                         console.log("Yee", json);
-                        showResults(json);
+                        showTop(json);
                     } else {
-                        showError("Malformed response :(");
+                        showTopError("Malformed response :(");
                         console.error(json);
                     }
                 });
             } else {
-                showError("Malformed response :(");
+                showTopError("Malformed response :(");
                 console.error(response);
             }
         });
 
-        function showError(error) {
+        function showTopError(error) {
             document.querySelector('#errors').innerHTML = error;
 
             document.querySelector('#errors').style.display = "block";
             document.querySelector('#table').style.visibility = "hidden";
         }
 
-        function showResults(json) {
+        function showTop(json) {
             var a = json.map(function(r) {
                 var pkgName = r["package"] || "n/a";
                 var flow = r["exists-in-flow"] || "n/a";

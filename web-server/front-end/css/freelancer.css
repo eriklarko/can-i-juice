@@ -298,3 +298,6 @@ tbody tr td:first-child {
   font-size: 20px;
   text-align: right;
 }
+#check-btn {
+  min-width: 182px;
+}
