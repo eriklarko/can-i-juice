@@ -10,7 +10,7 @@ services:
     volumes:
       - ./cache:/web-server/cache
     environment:
-      VIRTUAL_HOST: can-i-juice.com
+      VIRTUAL_HOST: can-i-juice.erik.la
     depends_on:
       - nginx-proxy
 
